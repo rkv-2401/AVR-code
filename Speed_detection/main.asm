@@ -92,7 +92,7 @@
 	cbi PORTA, @0
 .endmacro
 
-; copied from LCD command macros
+; copied from previous task - LCD command macros
 lcd_command:			; Send a command to the LCD (r26)
 	out PORTF, r16
 	nop
@@ -220,7 +220,7 @@ EXT_INT0:
 		pop temp2				;
 		reti					; return from interrupt
 
-;display code
+; display code
 .macro ones_scale
 	   mov r17, @0					;
 	   cpi r17, 10					;
@@ -263,12 +263,12 @@ EXT_INT0:
 			ldi temp1, 0			;reset it here
 			loop:
 				cpi r17, 100			;
-				brlo scale_done		;
+				brlo scale_done			;
 				subi r17, 100			;
-				inc temp1			    ;
+				inc temp1			;
 				cpi r17, 100			;
-				brsh loop				  ;
-				brlo scale_done		;
+				brsh loop				;
+				brlo scale_done			;
 				scale_done:
 					lcd_data_from_reg temp1	
 .endmacro
@@ -281,11 +281,11 @@ TIMER0OVF:						; interrupt subroutine for Timer0
 	cpi r25, high(64)			; everytime this timer overflows, it's one second anyway
 	brne return_intp
 	do_lcd_command 0b00000001	; clear and return to first place in the first line
-	; calculate tens, hundreds and zeros scale to display onto the LCD
-	; rev_count - final revolutions count at a RPS. Passing to one's scale should get it to display
+	;calculate tens, hundreds and zeros scale to display onto the LCD - same way we did previous task
+	;rev_count - final revolutions count at a RPS. Passing to one's scale should get it to display
 	ones_scale rev_count
-	clr rev_count				  ; once that iteration is displayed, clear everything
-	clr r17						    ; this thing needs to update every second or so
+	clr rev_count				; once that iteration is displayed, clear everything
+	clr r17						; this thing needs to update every second or so
 	clr byte_count_H			;
 	clr byte_count_L			;
 	return_intp:
@@ -294,3 +294,5 @@ TIMER0OVF:						; interrupt subroutine for Timer0
 ;jump here when (if?) the program ends
 halt:
 	rjmp halt		
+
+				
